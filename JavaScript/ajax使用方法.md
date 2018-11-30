@@ -190,3 +190,255 @@ function myFunction()
     });
 }
 ```
+
+## PHP实例
+- ajax用于创建动态性更强的应用程序
+```js
+//实例1: 将演示当用户在输入框中键入字符时，网页如何与 web 服务器进行通信。
+function showHint(str)
+{
+    var xmlhttp;
+    if (str.length == 0)
+    {
+        document.getElementById("txtHint").innerHTML="";
+        return;
+    }
+    if (window.XMLHttpRequest)
+    {   //主流浏览器执行代码
+        xmlhttp = new XMLHttpRequest();
+    }
+    else
+    {   //IE5、IE6浏览器执行代码
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+        }
+    }
+    xmlhttp.open("GET", "/try/ajax/gethint.php?q="+str, true);
+    xmlhttp.send();
+}
+
+```
+```html
+<h3>在输入框中尝试输入字母 a:</h3>
+<form action="">
+输入姓名: <input type="text" id="txt1" onkeyup="showHint(this.value)" />
+</form>
+<p>提示信息: <span id="txtHint"></span></p>
+```
+```js
+源码解析:
+
+- 当输入框为空( str.length == 0 )时, 函数清空 txtHint 占位符的内容,并退出函数。
+- 如果不为空, showHint 函数执行以下任务:
+    - 创建 XMLHttpRequest 对象
+    - 当服务器响应就绪时执行函数
+    - 把请求发送到服务器上的文件
+```
+
+##### 服务器页面-PHP
+- 由上面的 JavaScript 调用的服务器页面是PHP文件，名为“gethint.php”
+- "gethint.php"中的源代码会检查一个名字数组，然后向浏览器返回相应的名字:
+```php
+<?php
+// Fill up array with names
+$a[]="Anna";
+$a[]="Brittany";
+$a[]="Linda";
+$a[]="Nina";
+$a[]="Ophelia";
+$a[]="Petunia";
+$a[]="Amanda";
+
+//get the q parameter from URL
+$q=$_GET["q"];
+
+//lookup all hints from array if length of q>0
+if (strlen($q) > 0)
+{
+  $hint="";
+  for($i=0; $i<count($a); $i++)
+  {
+    if (strtolower($q)==strtolower(substr($a[$i],0,strlen($q))))
+    {
+      if ($hint=="")
+      {
+        $hint=$a[$i];
+      }
+      else
+      {
+        $hint=$hint." , ".$a[$i];
+      }
+    }
+  }
+}
+
+// Set output to "no suggestion" if no hint were found
+// or to the correct values
+if ($hint == "")
+{
+  $response="no suggestion";
+}
+else
+{
+  $response=$hint;
+}
+
+//output the response
+echo $response;
+?>
+```
+
+## DataBase实例
+- ajax 可用来与数据库进行动态通信
+```js
+//实例2: 将演示网页如何通过ajax从数据库读取信息
+function showCustomer(str)
+{
+  var xmlhttp;
+  if (str=="")
+  {
+    document.getElementById("txtHint").innerHTML="";
+    return;
+  }
+  if (window.XMLHttpRequest)
+  {
+    // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+    xmlhttp=new XMLHttpRequest();
+  }
+  else
+  {
+    // IE6, IE5 浏览器执行代码
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+    }
+  }
+  xmlhttp.open("GET","/try/ajax/getcustomer.php?q="+str,true);
+  xmlhttp.send();
+}
+```
+```html
+<form action="">
+<select name="customers" onchange="showCustomer(this.value)" style="font-family: Verdana, Arial, Helvetica, sans-serif;">
+<option value="APPLE">Apple Computer, Inc.</option>
+<option value="BAIDU ">BAIDU, Inc</option>
+<option value="Canon">Canon USA, Inc.</option>
+<option value="Google">Google, Inc.</option>
+<option value="Nokia">Nokia Corporation</option>
+<option value="SONY">Sony Corporation of America</option>
+</select>
+</form>
+<br>
+<div id="txtHint">客户信息将显示在这...</div>
+```
+```js
+源码解析:
+
+- showCustomer() 函数执行以下任务:
+    - 检查是否已选择某个客户
+    - 创建 XMLHttpRequest 对象
+    - 当服务器响应就绪时执行所创建的函数
+    - 把请求发送到服务器上的文件
+```
+
+##### 服务器页面-PHP
+- "getcustomer.php" 中的源代码负责对数据库进行查询，然后用 HTML 表格返回结果:
+```php
+<%
+response.expires=-1
+sql="SELECT * FROM CUSTOMERS WHERE CUSTOMERID="
+sql=sql & "'" & request.querystring("q") & "'"
+
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open(Server.Mappath("/db/northwind.mdb"))
+set rs=Server.CreateObject("ADODB.recordset")
+rs.Open sql,conn
+
+response.write("<table>")
+do until rs.EOF
+  for each x in rs.Fields
+    response.write("<tr><td><b>" & x.name & "</b></td>")
+    response.write("<td>" & x.value & "</td></tr>")
+  next
+  rs.MoveNext
+loop
+response.write("</table>")
+%>
+```
+
+## XML实例
+- ajax可以用来与XML文件进行交互式通信
+```js
+//实例3: 将演示网页如何使用ajax来读取来自XML文件的信息
+function loadXMLDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+    myFunction(this);
+    }
+  };
+  xhttp.open("GET", "cd_catalog.xml", true);
+  xhttp.send();
+}
+function myFunction(xml) {
+  var i;
+  var xmlDoc = xml.responseXML;
+  var table="<tr><th>Artist</th><th>Title</th></tr>";
+  var x = xmlDoc.getElementsByTagName("CD");
+  for (i = 0; i <x.length; i++) {
+    table += "<tr><td>" +
+    x[i].getElementsByTagName("ARTIST")[0].childNodes[0].nodeValue +
+    "</td><td>" +
+    x[i].getElementsByTagName("TITLE")[0].childNodes[0].nodeValue +
+    "</td></tr>";
+  }
+  document.getElementById("demo").innerHTML = table;
+}
+```
+```html
+<h1>XMLHttpRequest 对象</h1>
+
+<button type="button" onclick="loadXMLDoc()">获取我收藏的 CD</button>
+<br><br>
+<table id="demo"></table>
+```
+```
+源码分析:
+
+    - 当用户点击上面的"获取我收藏的 CD"这个按钮，就会执行 loadXMLDoc() 函数。
+    - loadXMLDoc()函数创建XMLHttpRequest对象,添加当服务器响应就绪时执行的函数并将请求发送到服务器。
+    - 当服务器响应就绪时会构建一个HTML表格，从XML文件中提取节点（元素），最后使用XML 数据填充 id="demo" 的表格元素。
+```
+
+##### 服务器页面-XML
+- 上面这个例子中使用的服务器页面实际上是一个名为 "cd_catalog.xml" XML 文件。
+```xml
+<CATALOG>
+<CD>
+<TITLE>Empire Burlesque</TITLE>
+<ARTIST>Bob Dylan</ARTIST>
+<COUNTRY>USA</COUNTRY>
+<COMPANY>Columbia</COMPANY>
+<PRICE>10.90</PRICE>
+<YEAR>1985</YEAR>
+</CD>
+<CD>
+<TITLE>Hide your heart</TITLE>
+<ARTIST>Bonnie Tyler</ARTIST>
+<COUNTRY>UK</COUNTRY>
+<COMPANY>CBS Records</COMPANY>
+<PRICE>9.90</PRICE>
+<YEAR>1988</YEAR>
+</CD>
+</CATALOG>
+```
