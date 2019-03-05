@@ -1,3 +1,9 @@
+```
+廖雪峰大神的python教程转PDF版 超高清
+适合刚学习python的同学使用
+链接: https://pan.baidu.com/s/1ZQg0q4_MtVouvJi0E2XGAQ 密码: hi48
+```
+
 - 输出
 - print('')里面用逗号隔开，可以输出多个字符串，输出形式中，逗号变成空格
 - 多行输出可以用`'''  '''`。
