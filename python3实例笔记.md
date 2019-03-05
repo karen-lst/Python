@@ -5,6 +5,8 @@ input()  # 返回的数据类型都是 String ,如果读入的数据需要进行
 format()  # 使用 format() 进行字符串的格式化时用 . 连接需要格式化的字符串。
 
 x,y = y,x # 不使用临时变量，来交换变量。python的特点，可以同时赋值给多个变量。一条语句就可以完成三条语句的作用，优雅、简短。
+
+max()   # 取一个序列中的最大值，可以是元组、列表、一串数字、一串字符
 ```
 
 ## 涉及到的模块
@@ -14,6 +16,19 @@ import cmath
 
 # 随机数
 import random
+
+# 编码字符
+import unicodedata
+unicodedata.numeric()   # 判断一个字符是否是数字
+
+# 判断闰年
+import calendar
+print(calendar.isleap(2000))
+print(calendar.isleap(2011))
+
+# 阶乘
+import math
+math.factorial(4)
 ```
 
 ## 需要注意的例子
