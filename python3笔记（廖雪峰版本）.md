@@ -1,34 +1,28 @@
-```
-廖雪峰大神的python教程转PDF版 超高清
-适合刚学习python的同学使用
-链接: https://pan.baidu.com/s/1ZQg0q4_MtVouvJi0E2XGAQ 密码: hi48
-```
-
-- 输出
+### 输出
 - print('')里面用逗号隔开，可以输出多个字符串，输出形式中，逗号变成空格
 - 多行输出可以用`'''  '''`。
 
-- 布尔类型
+### 布尔类型
 - 布尔值可以用 `and or not` 运算
 
-- 空值
+### 空值
 - 空值是一个特殊的值，用 `None` 表示，不能理解为 0 ，0 是有意义的，`None` 是一个特殊的空值
 
-- 常量
+### 常量
 - python中习惯上用全部大写的变量名表示常量
 
-- 除法运算
+### 除法运算
 - `/` 除法计算结果永远为浮点数，哪怕两个数能整除，结果仍为浮点数
 - `//` 地板除，结果永远为整数，哪怕除不尽，结果也为整数
 - `%` 取余，计算结果取余数
 
-- 赋值
+### 赋值
 - python支持多种数据类型，在计算机内部，每一个数据都存储在一个内存地址中，变量就是指向这些地址，对变量赋值就是把变量指向对应数据的内存地址。
 
-- 数值
+### 数值
 - python的整数、浮点数没有大小限制，超过一定限制就表示为 `inf` 无限大。
 
-- 列表
+### 列表
 - `append()` 追加元素到列表的末尾
 - `insert()` 把元素插到指定位置
 - `pop()` 删除列表末尾的元素，或者 `pop(i)` 删除指定索引的位置
@@ -108,3 +102,77 @@ a(-1)
 ##### 函数的参数
 - 位置参数
 - 默认参数
+
+### python语言的高级特性
+- python开发的准则：代码越少越好、越简单越好。1行代码能实现的功能，绝不写5行代码。代码越少，开发效率越高。
+
+##### 切片
+字符串、列表、元组，都可以使用切片操作，切片非常灵活，一行代码可以实现多行循环才能完成的操作。
+
+##### 迭代
+给定一个list或tuple，我们可以通过for循环来遍历这个list或tuple，这种遍历，我们称为迭代。
+    + python的for循环抽象程度要高于java的for循环，因为python的for循环不仅可以用在list、tuple上，还可以作用在其他可迭代对象上。
+    + 任何可迭代对象，都可以作用于for循环（包括我们自定义的数据类型）。
+    + 只要符合迭代条件，可以使用for循环。比如：dict、字符串。
+        * 因为dict的存储不是按照list的方式顺序排列，dict是无序的，所以，迭代出来的结果顺序可能不一样。
+        * 默认情况下，dict迭代的是key，如果要迭代value，如下。如果要同时迭代key、value，如下。
+        * 字符串也是可迭代对象，因此也可以作用于for循环
+```py
+d = {'a':1,'b':3,'c':4}
+
+# 默认情况
+for key in d:
+    print(key)
+
+# 迭代value
+for value in d.values():
+    print(value)
+
+# 迭代key、value
+for k,v in d.items():
+    print(k,v)
+```
+    + 如何判断一个对象是否是可迭代对象：通过 `collections` 模块的 `Iterable` 类型判断。如下。
+    + 可以用python内置的 `enumerate` 函数把一个list变成索引-元素对，这样就可以在for循环中同时迭代索引和元素本身
+```py
+from collections import Iterable
+
+print(isinstance('adafa',Iterable))
+print(isinstance([1,2,5],Iterable))
+print(isinstance((1,5,6),Iterable))
+print(isinstance(15654,Iterable))
+
+for i,value in enumerate(['A','B','C']):
+    print(i,value)
+```
+
+##### 列表生成式
+- 列表生成式，是python内置的非常简单却强大的，可以用来创建list的生成式。最外层用 `[ ]` ，后面可以加上if判断，还可以使用双层循环。
+- for循环其实可以同时使用两个甚至多个变量，比如dict的items()，可以同时迭代key、value。列表生成式也可以使用两个变量来生成list。
+```python
+print([x**2 for x in range(10)])
+print([x**2 for x in range(10) if x%2 ==0])
+print([x+y for x in 'ABD' for y in 'dfg'])
+>>>[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+>>>[0, 4, 16, 36, 64]
+>>>['Ad', 'Af', 'Ag', 'Bd', 'Bf', 'Bg', 'Dd', 'Df', 'Dg']
+
+d = {'a':'34','f':'45','g':'67'}
+print([k + '=' + v for k, v in d.items()])
+>>>['a=34', 'f=45', 'g=67']
+
+s = ['ASD','DSF','F','IH']
+print([x.lower() for x in s])
+>>>['asd', 'dsf', 'f', 'ih']
+
+L = ['hello','WORLD',4564,'PONY',None]
+print([i.lower() for i in L if isinstance(i,str)])
+>>>['hello', 'world', 'pony']
+```
+
+##### 生成器
+- 列表的容量是有限的，创建一个包含100万个元素的列表，会占用很大的存储空间，如果仅仅需要访问前面几个元素，那后面绝大多数元素占用的空间都白白浪费了。
+- 如果列表元素可以按照某种算法推算出来，那我们就能在循环的过程中不断推算出后面的元素，这样就不必创建完整的list，从而节省大量的空间。
+- 在python中，这种一边循环一边计算的机制，称为生成器：`generator`
+- 如何创建一个生成器：
+    + 第一种方法：只要把列表生成式的`[ ]` 改成 `( )` 就创建了一个 `genertor` 。使用for循环来迭代 `genertor`，就能不断获取下一个值。
