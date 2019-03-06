@@ -254,6 +254,9 @@ for i in g:
 >>>1,4,9,16,25,
 ```
     + 如果推算的算法比较复杂，用类似列表生成式for循环无法实现时，还可以用函数实现。
+    + 定义genertor的另一种方法：如果一个函数包含`yield`关键字，那么这个函数就不再是一个普通函数，而是一个genertor。
+    + genertor和函数的执行流程不一样，函数时顺序执行，遇到return语句后者最后一行函数语句就返回。而genertor在每次调用next()的时候执行，遇到yield语句返回，再次执行时，从上次返回的yield语句处继续执行。
+    + 使用for循环调用genertor时，如果想要拿到return语句的返回值，就必须捕获StopIteration错误，返回值包含在StopIteration的value中：
 ```py
 def num(max):
     n,a,b = 0,0,1
@@ -261,10 +264,32 @@ def num(max):
         yield b
         a,b=b,a+b
         n += 1
-
+    return 'done'
 b = num(3)
 print(next(b))
 print(next(b))
 print(next(b))
->>>>>>> 9622d146cd1a5fc2989cfdf0a5e8b8ca051e0388
+>>>1
+>>>1
+>>>2
+
+b = num(4)
+while True:
+	try:
+		x = next(b)
+		print('b:',x)
+	except StopIteration as e:
+		print('Generator return value:',e.value)
+		break
 ```
+
+##### 迭代器
+- 可以直接作用于for循环的数据类型有：
+	+ 集合数据类型：list、tuple、dict、set、str
+	+ generator：生成器、带yield的函数
+- 可直接作用于for循环的对象统称为：可迭代对象(Iterable)
+- 可使用isinstance()判断一个对象是否是Iterable对象
+- 可以被next()函数调用并不断返回下一个值得对象统称为迭代器：Iterator
+- 生成器都是迭代器对象，list、dict、str虽然是可迭代对象，却不是迭代器。可以使用iter()函数，将可迭代对象变成迭代器。
+- python的迭代器对象表示的是一个数据流，我们不能提前知道序列的长度，只能不断通过next()函数计算出下一个数据，所以迭代器的计算是惰性的。只有在需要返回下一个数据时，它才会计算。
+- python的for循环本质上就是通过不断调用next()函数实现的
