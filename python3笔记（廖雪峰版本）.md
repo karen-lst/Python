@@ -1,9 +1,3 @@
-```
-廖雪峰大神的python教程转PDF版 超高清
-适合刚学习python的同学使用
-链接: https://pan.baidu.com/s/1ZQg0q4_MtVouvJi0E2XGAQ 密码: hi48
-```
-
 - 输出
 - print('')里面用逗号隔开，可以输出多个字符串，输出形式中，逗号变成空格
 - 多行输出可以用`'''  '''`。
@@ -107,4 +101,69 @@ a(-1)
 
 ##### 函数的参数
 - 位置参数
-- 默认参数
+- 默认参数：默认参数必须指向不变对象，如果改变了默认参数的内容，那么下一次调用时，就不再是函数定义时默认的内容了。
+```py
+def app_end(l=[]):
+	l.append('END')
+	return l
+
+print(app_end())
+>>>['END']
+print(app_end())
+>>>['END','END']
+
+# 因为列表是可变的，列表对象的内容被改变了，而 l 又还是指向了同一个列表对象，所以默认参数的内容就变了。
+# 可以将列表换成 None
+
+def app_end(l=None):
+	if l is None:
+		l = []
+	l.append('END')
+	return l
+```
+- 可变参数：
+	- 在参数前面加一个 `*` 号，表示传入的参数个数是可变的。
+	- python允许在列表和元组前面加一个`*`号，把list、tuple的元素变成可变参数传进去
+	- 允许传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个 tuple
+```py
+def calc(*number):
+	sum = 0
+	for i in number:
+		sum += i ** 2
+	return sum
+```
+- 关键字参数：
+	- 关键字允许传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。
+	- 关键字参数可以扩展函数的功能
+	- `**extra` 表示把 `extra` 这个 dict 的所有 key-value 用关键字参数传入到函数的 `**kw` 参数，kw将获得一个dict，注意kw获得的dict是extra的一份拷贝，对kw的改动不会影响到函数外的extra。
+```py
+def person(name,age,**kw):
+    print('name:',name,'age:','other:',kw)
+
+
+person('asd',43)
+person('asd',43,city='beijing')
+person('asd',43,city='beijing',job='engineer')
+>>>name: asd age: other: {}
+>>>name: asd age: other: {'city': 'beijing'}
+>>>name: asd age: other: {'city': 'beijing', 'job': 'engineer'}
+
+# 也可以这样
+extra = {'city': 'Beijing', 'job': 'Engineer'}
+person('jack',43,**extra)
+```
+
+##### 递归函数
+- 如果一个函数在内部调用自身，这个函数就是递归函数
+- 递归函数的优点是：定义简单、逻辑清晰。
+- 理论上，所有递归函数都能写成循环的方式，但是循环的逻辑没有递归清晰
+- 使用递归函数时，需要防止栈溢出，在计算机中，函数调用时通过栈（stack）实现的。每当进入一个函数调用，栈就会加一层栈帧，每当函数返回，栈就会减一层栈帧。由于栈的大小是有限制的，所以，递归调用的次数太多，会导致栈溢出。
+	- 解决栈溢出的办法就是：通过 尾递归 优化。事实上，尾递归和循环的效果是一样的。所以，可以把循环看成是一种特殊的尾递归函数。
+	- 尾递归是指，在函数返回的时候，调用自身本身，并且，return 语句不能包含表达式。这样，解释器就可以把尾递归做优化，使递归无论调用多少次，都只占用一个栈帧，就不会出现栈溢出的情况。
+	- 大多数编程语言没有针对尾递归做优化，python解释器也没有，所以，即使把上面的函数改成尾递归方式，也会导致栈溢出。任何递归函数都存在栈溢出的问题。
+```py
+def fact_iter(num, product):
+    if num == 1:
+        return product
+    return fact_iter(num - 1, num * product)
+```
