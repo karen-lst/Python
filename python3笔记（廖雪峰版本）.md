@@ -175,4 +175,24 @@ print([i.lower() for i in L if isinstance(i,str)])
 - 如果列表元素可以按照某种算法推算出来，那我们就能在循环的过程中不断推算出后面的元素，这样就不必创建完整的list，从而节省大量的空间。
 - 在python中，这种一边循环一边计算的机制，称为生成器：`generator`
 - 如何创建一个生成器：
-    + 第一种方法：只要把列表生成式的`[ ]` 改成 `( )` 就创建了一个 `genertor` 。使用for循环来迭代 `genertor`，就能不断获取下一个值。
+    + 第一种方法：只要把列表生成式的`[ ]` 改成 `( )` 就创建了一个 `genertor` 。使用for循环来迭代 `genertor`，就能不断获取下一个值。不会出现调用 `next()` 到最后一个元素时跳出 `StopIteration` 错误。
+```py
+g = (x ** 2 for x in range(1,6))
+for i in g:
+    print(i,end=',')
+>>>1,4,9,16,25,
+```
+    + 如果推算的算法比较复杂，用类似列表生成式for循环无法实现时，还可以用函数实现。
+```py
+def num(max):
+    n,a,b = 0,0,1
+    while n < max:
+        yield b
+        a,b=b,a+b
+        n += 1
+
+b = num(3)
+print(next(b))
+print(next(b))
+print(next(b))
+```
