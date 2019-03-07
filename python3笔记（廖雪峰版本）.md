@@ -312,7 +312,6 @@ print(add(-5,6,abs))
 
 ##### map/reduce
 - map()函数接收两个参数，一个是函数，一个是Iterable，map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator 返回。
-- reduce 把一个函数作用在一个序列[x1, x2, x3, ...]上，这个函数必须接收两个参数，reduce 把结果和序列的下一个元素再传入函数做累计计算。`reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)`
 ```py
 def f(x):
     return x**2
@@ -324,12 +323,63 @@ print(list(g))
 g = map(str,[1,2,3,4,5,6,7,8,9])
 print(list(g))
 # 把list里面的所有数字转换成字符串
-
-
+```
+- reduce 把一个函数作用在一个序列[x1, x2, x3, ...]上，这个函数必须接收两个参数，reduce 把结果和序列的下一个元素再传入函数做累计计算。`reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)`
+```py
 from functools import reduce
 def add(x,y):
     return x*10 +y
 
 g = reduce(add,[1,2,3,4,5,6])
 print(g)
+# 累加
+
+def normalize(name):
+    return name.capitalize()
+
+print(list(map(normalize,['adam', 'LISA', 'barT'])))
+# 规范英文名
 ```
+
+##### filter
+- python 内建的filter()函数用于过滤序列。和map()类似，但和map()不同的是。
+- filter()把传入的函数依次作用于每个元素，根据函数返回值是True还是False决定保留还是丢弃该元素。
+- filter()这个高阶函数，关键在于正确实现一个“筛选”函数。返回的也是一个迭代器，需要有list()函数获得所有结果并返回list。
+```py
+def is_odd(s):
+    return s%2==1
+
+print(list(filter(is_odd,[1,2,3,4,5,6,7,8,9])))
+>>>[1, 3, 5, 7, 9]
+# 在一个list中只保留奇数，删掉偶数
+
+def is_pa(n):
+    s = str(n)
+    if s == s[::-1]:
+        return True
+
+print(list(filter(is_pa,range(1,1000))))
+# 利用filter()过滤掉非回数
+```
+
+##### sorted
+- python内置的sorted()函数可以对list进行排序。此外，sorted()函数还是一个高阶函数，可以接受key函数来实现自定义的排序。
+- key 指定的函数将作用于 list 的每一个元素上，并根据 key 函数返回的结果进行排序。
+- 如果要进行反向排序，不必改动key函数，可以传入第三个参数reverse=True
+```py
+sorted([36, 5, -12, 9, -21], key=abs)
+>>>[5, 9, -12, -21, 36]
+
+from operator import itemgetter
+L = ['bob', 'about', 'Zoo', 'Credit']
+print(sorted(L))
+print(sorted(L, key=str.lower))
+
+students = [('Bob', 75), ('Adam', 92), ('Bart', 66), ('Lisa', 88)]
+print(sorted(students, key=itemgetter(0)))
+print(sorted(students, key=lambda t: t[1]))
+print(sorted(students, key=itemgetter(1), reverse=True))
+```
+
+##### 返回函数
+- 高阶函数除了可以接受函数作为参数外，还可以把函数作为结果值返回。当返回的函数被调用时，才真正计算函数结果。
