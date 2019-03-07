@@ -383,3 +383,118 @@ print(sorted(students, key=itemgetter(1), reverse=True))
 
 ##### 返回函数
 - 高阶函数除了可以接受函数作为参数外，还可以把函数作为结果值返回。当返回的函数被调用时，才真正计算函数结果。
+- 我们在函数lazy_sum中又定义了函数sum，并且，内部函数sum可以引用外部函数lazy_sum的参数和局部变量，当lazy_sum返回函数sum时，相关参数和变量都保存在返回的函数中，这种称为“闭包（Closure）”的程序结构拥有极大的威力。
+- 当我们调用lazy_sum()时，每次调用都会返回一个新的函数，即使传入相同的参数。
+- 返回闭包时牢记：返回函数不要引用任何循环变量，或者后续会发生变化的变量
+
+##### 匿名函数
+- 关键字lambda表示匿名函数，冒号前面的x表示函数参数。
+- 匿名函数有个限制，就是只能有一个表达式，不用写return，返回值就是该表达式的结果。
+- 匿名函数也是一个函数对象，也可以把匿名函数赋值给一个变量，再利用变量来调用该函数
+- Python对匿名函数的支持有限，只有一些简单的情况下可以使用匿名函数。
+
+##### 装饰器
+
+##### 偏函数
+- Python的functools模块提供了很多有用的功能，其中一个就是偏函数（Partial function）
+- int()函数可以把字符串转换为整数，当仅传入字符串时，int()函数默认按十进制转换：
+```py
+int('12345')
+>>>12345
+```
+- 但int()函数还提供额外的base参数，默认值为10。如果传入base参数，就可以做N进制的转换：
+```py
+int('12345', base=8)
+>>>5349
+int('12345', 16)
+>>>74565
+```
+- functools.partial就是帮助我们创建一个偏函数的。
+```py
+import functools
+int2 = functools.partial(int, base=2)
+int2('1000000')
+>>>64
+```
+- 简单总结functools.partial的作用就是，把一个函数的某些参数给固定住（也就是设置默认值），返回一个新的函数，调用这个新函数会更简单。
+
+### 模块
+- Python本身就内置了很多非常有用的模块，只要安装完毕，这些模块就可以立刻使用。以内建的sys模块为例，编写一个hello的模块：
+```py
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+' a test module '
+
+__author__ = 'Michael Liao'
+
+import sys
+
+def test():
+    args = sys.argv
+    if len(args)==1:
+        print('Hello, world!')
+    elif len(args)==2:
+        print('Hello, %s!' % args[1])
+    else:
+        print('Too many arguments!')
+
+if __name__=='__main__':
+    test()
+```
+- 第1行和第2行是标准注释，第1行注释可以让这个hello.py文件直接在Unix/Linux/Mac上运行，第2行注释表示.py文件本身使用标准UTF-8编码；
+- 第4行是一个字符串，表示模块的文档注释，任何模块代码的第一个字符串都被视为模块的文档注释；
+- 第6行使用__author__变量把作者写进去,以上就是Python模块的标准文件模板
+
+##### 作用域
+- 在一个模块中，我们可能会定义很多函数和变量，但有的函数和变量我们希望给别人使用，有的函数和变量我们希望仅仅在模块内部使用。在Python中，是通过_前缀来实现的
+- 类似_xxx和__xxx这样的函数或变量就是非公开的（private），不应该被直接引用
+- Python并没有一种方法可以完全限制访问private函数或变量，但是，从编程习惯上不应该引用private函数或变量。
+- private函数或变量不应该被别人引用，那它们有什么用呢？
+	+ 我们在模块里公开greeting()函数，而把内部逻辑用private函数隐藏起来了
+	+ 这样，调用greeting()函数不用关心内部的private函数细节，这也是一种非常有用的代码封装和抽象的方法，即：外部不需要引用的函数全部定义成private，只有外部需要引用的函数才定义为public。
+```py
+def _private_1(name):
+    return 'Hello, %s' % name
+
+def _private_2(name):
+    return 'Hi, %s' % name
+
+def greeting(name):
+    if len(name) > 3:
+        return _private_1(name)
+    else:
+        return _private_2(name)
+```
+
+### 面向对象编程
+- 在Python中，所有数据类型都可以视为对象，当然也可以自定义对象。自定义的对象数据类型就是面向对象中的类（Class）的概念。
+- 数据封装、继承和多态是面向对象的三大特点。
+```py
+class Student(object):
+
+    def __init__(self, name, score):
+        self.name = name
+        self.score = score
+
+    def print_score(self):
+        print('%s: %s' % (self.name, self.score))
+
+bart = Student('Bart Simpson', 59)
+lisa = Student('Lisa Simpson', 87)
+bart.print_score()
+lisa.print_score()
+```
+
+##### 类和实例
+- 在Python中，定义类是通过class关键字
+- class后面紧接着是类名，即Student，类名通常是大写开头的单词，紧接着是(object)，表示该类是从哪个类继承下来的，通常，如果没有合适的继承类，就使用object类，这是所有类最终都会继承的类。
+- 定义好了Student类，就可以根据Student类创建出Student的实例，创建实例是通过类名+()实现的
+- 可以在创建实例的时候，把一些我们认为必须绑定的属性强制填写进去。通过定义一个特殊的__init__方法
+- `__init__方法`的第一个参数永远是self，表示创建的实例本身，因此，在__init__方法内部，就可以把各种属性绑定到self，因为self就指向创建的实例本身。
+
+###### 数据封装
+- 我们从外部看Student类，就只需要知道，创建实例需要给出name和score，而如何打印，都是在Student类的内部定义的，这些数据和逻辑被“封装”起来了，调用很容易，但却不用知道内部实现的细节。
+- 类是创建实例的模板，而实例则是一个一个具体的对象，各个实例拥有的数据都互相独立，互不影响；
+- 方法就是与实例绑定的函数，和普通函数不同，方法可以直接访问实例的数据；
+- 通过在实例上调用方法，我们就直接操作了对象内部的数据，但无需知道方法内部的实现细节。
