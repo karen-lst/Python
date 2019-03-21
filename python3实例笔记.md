@@ -31,6 +31,24 @@ import math
 math.factorial(4)
 ```
 
+```py
+# PIL 图像处理模块
+from PIL import Image, ImageFilter, ImageDraw, ImageFont
+
+# 创建图像对象
+Image.new(mode,size,color)
+>>>image = Image.new("RGB",(width,height),(255,255,255))
+
+# 创建 Font 对象
+# 加载一个TrueType或者OpenType字体文件，并且创建一个字体对象。这个函数从指定的文件加载了一个字体对象，并且为指定大小的字体创建了字体对象。
+ImageFont.truetype(file,size)
+>>>font = ImageFont.truetype('Arial.ttf',36)
+
+# 创建 Draw 对象
+# 创建一个可用来对image进行操作的对象，指定操作的对象
+>>>draw = ImageDraw.Draw(image)
+```
+
 ## 需要注意的例子
 - 带符号的温度转换：
     - 涉及到多个知识点，请熟练掌握每个知识点
