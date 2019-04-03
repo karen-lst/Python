@@ -32,3 +32,16 @@ print(x)
 - math:数学运算
 - re:正则匹配
 - datetime:处理日期时间
+
+4.字典如何删除键和合并两个字典
+```py
+dic = {'name':'karen','age':23}
+aa = {'city':'beijing'}
+del dic['name']
+print(dic)
+>>>{'age': 23}
+dic.update(aa)
+print(dic)
+>>>{'age': 23, 'city': 'beijing'}
+
+```
