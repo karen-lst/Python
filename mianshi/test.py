@@ -22,7 +22,8 @@ dic = dict(name='kren',age=23)
 aa = {'city':'beijing'}
 del dic['name']
 
-logging.info('aa:{}'.format(aa))
-print(dic)
+# logging.info('aa:{}'.format(aa))
+# print(dic)
 dic.update(aa)
-print(dic)
+# print(dic)
+
