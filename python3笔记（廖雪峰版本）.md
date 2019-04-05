@@ -138,15 +138,15 @@ def calc(*number):
 	- `**extra` 表示把 `extra` 这个 dict 的所有 key-value 用关键字参数传入到函数的 `**kw` 参数，kw将获得一个dict，注意kw获得的dict是extra的一份拷贝，对kw的改动不会影响到函数外的extra。
 ```py
 def person(name,age,**kw):
-    print('name:',name,'age:','other:',kw)
+    print('name:',name,'age:',age,'other:',kw)
 
 
 person('asd',43)
 person('asd',43,city='beijing')
 person('asd',43,city='beijing',job='engineer')
->>>name: asd age: other: {}
->>>name: asd age: other: {'city': 'beijing'}
->>>name: asd age: other: {'city': 'beijing', 'job': 'engineer'}
+>>>name: asd age: 43 other: {}
+>>>name: asd age: 43 other: {'city': 'beijing'}
+>>>name: asd age: 43 other: {'city': 'beijing', 'job': 'engineer'}
 
 # 也可以这样
 extra = {'city': 'Beijing', 'job': 'Engineer'}
